@@ -84,7 +84,8 @@ public class VeiculoController {
     @Operation(summary = "Remover veículo", description = "Remove um veículo do sistema")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Veículo removido com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Veículo não encontrado")
+            @ApiResponse(responseCode = "404", description = "Veículo não encontrado"),
+            @ApiResponse(responseCode = "409", description = "Veículo vinculado a aluguéis")
     })
     public ResponseEntity<Void> remover(
             @Parameter(description = "ID do veículo") @PathVariable Long id) {

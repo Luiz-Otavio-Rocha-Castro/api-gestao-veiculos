@@ -1,6 +1,8 @@
 package com.alugel.api_gestao_veiculos.modules.cliente;
 
 import com.alugel.api_gestao_veiculos.exception.exceptions.ClienteNaoEncontradoException;
+import com.alugel.api_gestao_veiculos.exception.exceptions.RegistroVinculadoException;
+import com.alugel.api_gestao_veiculos.modules.aluguel.AluguelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.stream.Collectors;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final AluguelRepository aluguelRepository;
 
     public ClienteDTO.Response cadastrar(ClienteDTO.Request request) {
         Cliente cliente = new Cliente();
@@ -57,6 +60,11 @@ public class ClienteService {
     public void remover(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ClienteNaoEncontradoException("Cliente não encontrado com id: " + id));
+
+        if (!aluguelRepository.findByClienteId(id).isEmpty()) {
+            throw new RegistroVinculadoException("Não é possível remover cliente vinculado a aluguéis");
+        }
+
         clienteRepository.delete(cliente);
     }
 

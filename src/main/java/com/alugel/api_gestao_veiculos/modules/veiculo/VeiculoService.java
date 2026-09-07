@@ -1,6 +1,8 @@
 package com.alugel.api_gestao_veiculos.modules.veiculo;
 
+import com.alugel.api_gestao_veiculos.exception.exceptions.RegistroVinculadoException;
 import com.alugel.api_gestao_veiculos.exception.exceptions.VeiculoNaoEncontradoException;
+import com.alugel.api_gestao_veiculos.modules.aluguel.AluguelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.stream.Collectors;
 public class VeiculoService {
 
     private final VeiculoRepository veiculoRepository;
+    private final AluguelRepository aluguelRepository;
 
     public VeiculoDTO.Response cadastrar(VeiculoDTO.Request request) {
         Veiculo veiculo = new Veiculo();
@@ -62,6 +65,11 @@ public class VeiculoService {
     public void remover(Long id) {
         Veiculo veiculo = veiculoRepository.findById(id)
                 .orElseThrow(() -> new VeiculoNaoEncontradoException("Veículo não encontrado com id: " + id));
+
+        if (!aluguelRepository.findByVeiculoId(id).isEmpty()) {
+            throw new RegistroVinculadoException("Não é possível remover veículo vinculado a aluguéis");
+        }
+
         veiculoRepository.delete(veiculo);
     }
 

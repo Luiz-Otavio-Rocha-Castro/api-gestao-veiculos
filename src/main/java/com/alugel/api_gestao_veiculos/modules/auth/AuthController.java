@@ -1,6 +1,8 @@
 package com.alugel.api_gestao_veiculos.modules.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +36,8 @@ public class AuthController {
     @Operation(summary = "Cadastrar usuário", description = "Cadastra um novo usuário no sistema")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Usuário cadastrado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(schema = @Schema(implementation = AuthDTO.RegisterRequest.class))),
             @ApiResponse(responseCode = "409", description = "Email já cadastrado")
     })
     public ResponseEntity<Void> register(@RequestBody @Valid AuthDTO.RegisterRequest request) {
@@ -53,7 +56,8 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Fazer login", description = "Autentica o usuário e retorna um token JWT")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Login realizado com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Login realizado com sucesso",
+                    content = @Content(schema = @Schema(implementation = AuthDTO.Response.class))),
             @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
     })
     public ResponseEntity<AuthDTO.Response> login(@RequestBody @Valid AuthDTO.Request request) {

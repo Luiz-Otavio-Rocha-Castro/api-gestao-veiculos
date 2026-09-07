@@ -84,7 +84,8 @@ public class ClienteController {
     @Operation(summary = "Remover cliente", description = "Remove um cliente do sistema")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Cliente removido com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
+            @ApiResponse(responseCode = "409", description = "Cliente vinculado a aluguéis")
     })
     public ResponseEntity<Void> remover(
             @Parameter(description = "ID do cliente") @PathVariable Long id) {
