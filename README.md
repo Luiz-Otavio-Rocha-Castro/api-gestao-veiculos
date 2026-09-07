@@ -2,6 +2,12 @@
 
 API RESTful para gestão de frota e sistema de aluguel de veículos, construída com Spring Boot e PostgreSQL.
 
+## Deploy (Produção)
+
+- **API:** https://api-gestao-veiculos.onrender.com
+- **Swagger UI:** https://api-gestao-veiculos.onrender.com/swagger-ui.html
+- **OpenAPI JSON:** https://api-gestao-veiculos.onrender.com/v3/api-docs
+
 ## Funcionalidades
 
 - CRUD completo de veículos, clientes e aluguéis
@@ -24,7 +30,7 @@ API RESTful para gestão de frota e sistema de aluguel de veículos, construída
 
 ### Pré-requisitos
 
-- Java 17+
+- Java 21
 - PostgreSQL
 - Maven
 
@@ -33,8 +39,6 @@ API RESTful para gestão de frota e sistema de aluguel de veículos, construída
 ```sql
 CREATE DATABASE api_veiculos;
 ```
-
-Ou execute o script completo em `src/main/resources/data.sql`.
 
 ### 2. Configurar variáveis de ambiente
 
@@ -140,25 +144,29 @@ curl -X GET http://localhost:8080/api/veiculos \
 - Aluguel deve ter no mínimo 1 dia
 - Valor total é calculado automaticamente (diária × dias)
 - CPF e placa devem ser únicos no sistema
+- Não é possível remover veículo/cliente vinculado a aluguéis (409)
+- Buscar aluguéis por veículo/cliente inexistente retorna 404
 
 ## Deploy
 
-### Render
+### Render (produção atual)
 
-1. Criar conta no [Render](https://render.com)
-2. Criar um **Web Service** conectando ao repositório GitHub
-3. Criar um **PostgreSQL** no Render
-4. Configurar variáveis de ambiente:
-   - `DATABASE_URL` = URL do banco Render
-   - `DATABASE_USERNAME` = usuário do banco
-   - `DATABASE_PASSWORD` = senha do banco
-   - `JWT_SECRET` = chave secreta JWT (mínimo 32 caracteres)
+- **Web Service:** Docker (`./Dockerfile`, imagem `maven:3.9-eclipse-temurin-21`), plano Free, região Oregon
+- **Banco:** PostgreSQL no Render (`api-veiculos-db`)
+- **Variáveis de ambiente:**
+  - `SPRING_PROFILES_ACTIVE` = `prod`
+  - `SPRING_DATASOURCE_URL` = `jdbc:postgresql://HOST:5432/api_veiculos` (sem usuário/senha na URL)
+  - `SPRING_DATASOURCE_USERNAME` = usuário do banco
+  - `SPRING_DATASOURCE_PASSWORD` = senha do banco
+  - `JWT_SECRET` = chave secreta JWT
+- Perfil `prod` em `src/main/resources/application-prod.properties` (`ddl-auto=update`, dialect PostgreSQL).
 
 ## Estrutura do Projeto
 
 ```
 src/main/java/com/alugel/api_gestao_veiculos/
 ├── config/
+│   ├── CorsConfig.java
 │   ├── JwtAuthenticationFilter.java
 │   ├── JwtTokenProvider.java
 │   ├── SecurityConfig.java
@@ -170,6 +178,7 @@ src/main/java/com/alugel/api_gestao_veiculos/
 │       ├── ClienteNaoEncontradoException.java
 │       ├── DadosInvalidosException.java
 │       ├── DataInvalidaException.java
+│       ├── RegistroVinculadoException.java
 │       ├── VeiculoIndisponivelException.java
 │       └── VeiculoNaoEncontradoException.java
 ├── modules/
