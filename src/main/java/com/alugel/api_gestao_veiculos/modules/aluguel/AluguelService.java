@@ -72,6 +72,9 @@ public class AluguelService {
     }
 
     public List<AluguelDTO.Response> buscarPorVeiculo(Long veiculoId) {
+        if (veiculoRepository.findById(veiculoId).isEmpty()) {
+            throw new VeiculoNaoEncontradoException("Veículo não encontrado com id: " + veiculoId);
+        }
         return aluguelRepository.findByVeiculoId(veiculoId)
                 .stream()
                 .map(this::toResponse)
@@ -79,6 +82,9 @@ public class AluguelService {
     }
 
     public List<AluguelDTO.Response> buscarPorCliente(Long clienteId) {
+        if (clienteRepository.findById(clienteId).isEmpty()) {
+            throw new ClienteNaoEncontradoException("Cliente não encontrado com id: " + clienteId);
+        }
         return aluguelRepository.findByClienteId(clienteId)
                 .stream()
                 .map(this::toResponse)

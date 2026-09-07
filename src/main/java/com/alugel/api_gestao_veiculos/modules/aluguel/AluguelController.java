@@ -59,7 +59,8 @@ public class AluguelController {
     @GetMapping("/veiculo/{veiculoId}")
     @Operation(summary = "Buscar aluguéis por veículo", description = "Retorna todos os aluguéis de um veículo")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Veículo não encontrado")
     })
     public ResponseEntity<List<AluguelDTO.Response>> buscarPorVeiculo(
             @Parameter(description = "ID do veículo") @PathVariable Long veiculoId) {
@@ -70,7 +71,8 @@ public class AluguelController {
     @GetMapping("/cliente/{clienteId}")
     @Operation(summary = "Buscar aluguéis por cliente", description = "Retorna todos os aluguéis de um cliente")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     public ResponseEntity<List<AluguelDTO.Response>> buscarPorCliente(
             @Parameter(description = "ID do cliente") @PathVariable Long clienteId) {
